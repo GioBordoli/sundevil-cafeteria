@@ -1,0 +1,185 @@
+/* Custom styles for Sundevil Cafeteria */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-brand i {
+    color: #ffcc00;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #8B0000 0%, #FFD700 100%);
+    color: white;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.hero-section .text-primary {
+    color: white !important;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #8B0000;
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    font-weight: bold;
+}
+
+/* Menu Items */
+.menu-item-card {
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.menu-item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-item-image {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.price-tag {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #8B0000;
+}
+
+/* Cart Summary */
+#cart-summary {
+    position: sticky;
+    top: 20px;
+}
+
+.cart-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+/* Order Cards */
+.order-card {
+    border-left: 4px solid #8B0000;
+    margin-bottom: 15px;
+}
+
+.order-status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status-pending { background-color: #ffc107; }
+.status-confirmed { background-color: #17a2b8; }
+.status-preparing { background-color: #fd7e14; }
+.status-ready { background-color: #28a745; }
+.status-completed { background-color: #6c757d; }
+.status-cancelled { background-color: #dc3545; }
+
+/* Buttons */
+.btn-primary {
+    background-color: #8B0000;
+    border-color: #8B0000;
+}
+
+.btn-primary:hover {
+    background-color: #660000;
+    border-color: #660000;
+}
+
+.btn-outline-primary {
+    color: #8B0000;
+    border-color: #8B0000;
+}
+
+.btn-outline-primary:hover {
+    background-color: #8B0000;
+    border-color: #8B0000;
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: #8B0000;
+    box-shadow: 0 0 0 0.2rem rgba(139, 0, 0, 0.25);
+}
+
+/* Loading spinner */
+.loading {
+    text-align: center;
+    padding: 50px;
+}
+
+.spinner-border-custom {
+    color: #8B0000;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 30px 20px !important;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem !important;
+    }
+    
+    .menu-item-card {
+        margin-bottom: 20px;
+    }
+    
+    #cart-summary {
+        position: relative;
+        margin-top: 20px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Utility classes */
+.text-sundevil {
+    color: #8B0000 !important;
+}
+
+.bg-sundevil {
+    background-color: #8B0000 !important;
+}
+
+.text-gold {
+    color: #FFD700 !important;
+}
+
+.bg-gold {
+    background-color: #FFD700 !important;
+} 

@@ -1,0 +1,39 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'build'
+      - '-t'
+      - 'gcr.io/sundevil-cafeteria/backend:latest'
+      - '.'
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/sundevil-cafeteria/backend:latest'
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'sundevil-cafeteria-backend'
+      - '--image'
+      - 'gcr.io/sundevil-cafeteria/backend:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'DB_PASSWORD=${_DB_PASSWORD}'
+      - '--add-cloudsql-instances'
+      - 'sundevil-cafeteria:us-central1:sundevil-cafeteria-db'
+
+substitutions:
+  _DB_PASSWORD: 'sundevil123'
+
+options:
+  logging: CLOUD_LOGGING_ONLY 

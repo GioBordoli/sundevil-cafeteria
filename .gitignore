@@ -1,0 +1,211 @@
+# 🔐 Sundevil Cafeteria - Secure Repository Configuration
+
+# ==========================================
+# SECURITY & SENSITIVE FILES
+# ==========================================
+
+# Google Cloud Service Account Keys (CRITICAL - DO NOT COMMIT)
+gcloud-key.json*
+service-account*.json
+key*.json
+*-key.json
+credentials.json
+
+# Environment Variables & Configuration
+.env
+.env.local
+.env.production
+.env.test
+*.properties.local
+application-local.properties
+
+# ==========================================
+# JAVA / MAVEN / SPRING BOOT
+# ==========================================
+
+# Maven
+backend/target/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# IDE Files
+backend/.idea/
+backend/*.iml
+backend/.project
+backend/.classpath
+backend/.settings/
+backend/.vscode/
+
+# Build & Logs
+backend/*.log
+backend/logs/
+backend/tmp/
+
+# ==========================================
+# FRONTEND / FIREBASE
+# ==========================================
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log*
+.firebase-cache/
+
+# Node.js (if using)
+frontend/node_modules/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ==========================================
+# TEMPORARY & BUILD FILES
+# ==========================================
+
+# Image Files (uploaded during development)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.backup
+*~
+.DS_Store
+Thumbs.db
+
+# Archive Files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# ==========================================
+# IDE & EDITOR FILES
+# ==========================================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# OPERATING SYSTEM FILES
+# ==========================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.Trash-*
+.nfs*
+
+# ==========================================
+# DEVELOPMENT & TESTING
+# ==========================================
+
+# Test Reports
+backend/target/surefire-reports/
+backend/target/failsafe-reports/
+
+# JaCoCo Test Coverage
+backend/target/jacoco/
+
+# Debug Files
+debug.log
+error.log
+access.log
+
+# ==========================================
+# DOCUMENTATION BUILDS
+# ==========================================
+
+# Generated Documentation
+docs/build/
+site/
+
+# ==========================================
+# DEPLOYMENT ARTIFACTS
+# ==========================================
+
+# Docker
+.dockerignore
+
+# Kubernetes
+k8s-secrets.yaml
+secrets/
+
+# ==========================================
+# ALLOWED FILES (EXPLICIT INCLUDES)
+# ==========================================
+
+# Keep these configuration files
+!firebase.json
+!backend/pom.xml
+!backend/Dockerfile
+!backend/cloudbuild.yaml
+!backend/src/main/resources/application.properties
+
+# Keep documentation
+!README.md
+!deployment-commands.md
+!*.md
+
+# Keep source code
+!backend/src/
+!frontend/
+
+# ==========================================
+# PROJECT SPECIFIC EXCLUSIONS
+# ==========================================
+
+# Exclude reference menu PDFs (large files)
+menus/*.pdf
+
+# Exclude any local development databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Exclude generated API documentation
+api-docs/
+swagger-ui/ 
