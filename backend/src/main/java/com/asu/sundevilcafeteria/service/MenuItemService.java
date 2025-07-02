@@ -57,7 +57,12 @@ public class MenuItemService {
         menuItem.setPrice(menuItemDto.getPrice());
         menuItem.setCategory(menuItemDto.getCategory());
         menuItem.setAvailable(menuItemDto.getAvailable());
-        menuItem.setImageUrl(menuItemDto.getImageUrl());
+        
+        // Only update imageUrl if it's provided in the DTO
+        // This preserves existing images when updating other fields
+        if (menuItemDto.getImageUrl() != null) {
+            menuItem.setImageUrl(menuItemDto.getImageUrl());
+        }
         
         return menuItemRepository.save(menuItem);
     }
@@ -81,5 +86,12 @@ public class MenuItemService {
     
     public MenuItem saveMenuItem(MenuItem menuItem) {
         return menuItemRepository.save(menuItem);
+    }
+    
+    public List<MenuItem> searchMenuItems(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return getAvailableMenuItems();
+        }
+        return menuItemRepository.searchAvailableMenuItems(query.trim());
     }
 } 

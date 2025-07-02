@@ -329,8 +329,156 @@ function uploadImage(itemId) {
     fileInput.click();
 }
 
-function editMenuItem(itemId) {
-    showAlert('Edit menu item functionality would be implemented here', 'info');
+async function editMenuItem(itemId) {
+    try {
+        // Fetch the current menu item data
+        const menuItem = await apiRequest(`/menu/${itemId}`);
+        
+        const modalHtml = `
+            <div class="modal fade" id="editMenuItemModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Menu Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="edit-menu-item-form">
+                                <div class="mb-3">
+                                    <label for="edit-item-name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="edit-item-name" value="${menuItem.name}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-item-description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="edit-item-description" rows="3">${menuItem.description || ''}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-item-category" class="form-label">Category</label>
+                                    <select class="form-control" id="edit-item-category" required>
+                                        <option value="BREAKFAST" ${menuItem.category === 'BREAKFAST' ? 'selected' : ''}>Breakfast</option>
+                                        <option value="LUNCH" ${menuItem.category === 'LUNCH' ? 'selected' : ''}>Lunch</option>
+                                        <option value="DINNER" ${menuItem.category === 'DINNER' ? 'selected' : ''}>Dinner</option>
+                                        <option value="BEVERAGES" ${menuItem.category === 'BEVERAGES' ? 'selected' : ''}>Beverages</option>
+                                        <option value="SNACKS" ${menuItem.category === 'SNACKS' ? 'selected' : ''}>Snacks</option>
+                                        <option value="DESSERTS" ${menuItem.category === 'DESSERTS' ? 'selected' : ''}>Desserts</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-item-price" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="edit-item-price" step="0.01" min="0" value="${menuItem.price}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-item-available" class="form-label">Availability</label>
+                                    <select class="form-control" id="edit-item-available" required>
+                                        <option value="true" ${menuItem.available ? 'selected' : ''}>Available</option>
+                                        <option value="false" ${!menuItem.available ? 'selected' : ''}>Unavailable</option>
+                                    </select>
+                                </div>
+                                ${menuItem.imageUrl ? `
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Image</label>
+                                        <div>
+                                            <img src="${menuItem.imageUrl}" class="img-thumbnail" style="max-width: 150px; max-height: 150px; object-fit: cover;" alt="${menuItem.name}">
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                <div class="mb-3">
+                                    <label for="edit-item-image" class="form-label">${menuItem.imageUrl ? 'Replace Image (Optional)' : 'Add Image (Optional)'}</label>
+                                    <input type="file" class="form-control" id="edit-item-image" accept="image/*">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="submitEditMenuItem(${itemId})">Update Item</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing modal if any
+        const existingModal = document.getElementById('editMenuItemModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('editMenuItemModal'));
+        modal.show();
+        
+    } catch (error) {
+        showAlert('Failed to load menu item details: ' + error.message, 'danger');
+    }
+}
+
+async function submitEditMenuItem(itemId) {
+    const name = document.getElementById('edit-item-name').value;
+    const description = document.getElementById('edit-item-description').value;
+    const category = document.getElementById('edit-item-category').value;
+    const price = parseFloat(document.getElementById('edit-item-price').value);
+    const available = document.getElementById('edit-item-available').value === 'true';
+    const imageFile = document.getElementById('edit-item-image').files[0];
+    
+    if (!name || !category || !price) {
+        showAlert('Please fill in all required fields', 'warning');
+        return;
+    }
+    
+    try {
+        // Update menu item data
+        const menuItemData = {
+            name: name,
+            description: description,
+            category: category,
+            price: price,
+            available: available
+        };
+        
+        const updatedMenuItem = await apiRequest(`/menu/${itemId}`, {
+            method: 'PUT',
+            body: JSON.stringify(menuItemData)
+        });
+        
+        // Upload new image if provided
+        if (imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            
+            const imageResponse = await fetch(`${API_BASE_URL}/menu/${itemId}/image`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Handle image upload response properly
+            if (!imageResponse.ok) {
+                const contentType = imageResponse.headers.get('content-type');
+                let errorData = null;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    const responseText = await imageResponse.text();
+                    if (responseText.trim()) {
+                        errorData = JSON.parse(responseText);
+                    }
+                }
+                
+                throw new Error(errorData?.error || `Image upload failed: HTTP ${imageResponse.status}`);
+            }
+        }
+        
+        showAlert('Menu item updated successfully!', 'success');
+        
+        // Close modal and refresh list
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editMenuItemModal'));
+        modal.hide();
+        loadMenuManagement();
+        
+    } catch (error) {
+        showAlert('Failed to update menu item: ' + error.message, 'danger');
+    }
 }
 
 function showAddMenuItemForm() {

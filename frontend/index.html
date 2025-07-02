@@ -159,6 +159,29 @@
                     </div>
                 </div>
                 <div class="col-md-9">
+                    <!-- Search Bar -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="search-input" 
+                                               placeholder="Search menu items by name or description...">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+                                            <i class="fas fa-times"></i> Clear
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <small class="text-muted" id="search-results-count"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div id="menu-items" class="row">
                         <!-- Menu items will be populated here -->
                     </div>

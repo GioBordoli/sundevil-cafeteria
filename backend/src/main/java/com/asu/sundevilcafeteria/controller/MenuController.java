@@ -45,6 +45,12 @@ public class MenuController {
         return ResponseEntity.ok(menuItems);
     }
     
+    @GetMapping("/search")
+    public ResponseEntity<List<MenuItem>> searchMenuItems(@RequestParam("q") String query) {
+        List<MenuItem> menuItems = menuItemService.searchMenuItems(query);
+        return ResponseEntity.ok(menuItems);
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<?> getMenuItemById(@PathVariable Long id) {
         try {

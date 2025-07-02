@@ -2,12 +2,14 @@
 
 let allMenuItems = [];
 let currentCategory = 'ALL';
+let currentSearchQuery = '';
 
 async function loadMenuItems() {
     try {
         showLoading('menu-items');
         allMenuItems = await apiRequest('/menu');
         displayMenuItems(allMenuItems);
+        updateResultsCount(allMenuItems.length);
     } catch (error) {
         document.getElementById('menu-items').innerHTML = `
             <div class="col-12">
@@ -19,14 +21,109 @@ async function loadMenuItems() {
     }
 }
 
+// Initialize search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        // Add real-time search with debouncing
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(this.value);
+            }, 300);
+        });
+        
+        // Add enter key support
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch(this.value);
+            }
+        });
+    }
+});
+
+async function performSearch(query) {
+    currentSearchQuery = query.trim();
+    
+    try {
+        if (currentSearchQuery === '') {
+            // If search is empty, show all items or current category
+            if (currentCategory === 'ALL') {
+                displayMenuItems(allMenuItems);
+                updateResultsCount(allMenuItems.length);
+            } else {
+                filterByCategory(currentCategory);
+            }
+            return;
+        }
+        
+        showLoading('menu-items');
+        
+        // Call search API
+        const searchResults = await apiRequest(`/menu/search?q=${encodeURIComponent(currentSearchQuery)}`);
+        
+        // If category filter is active, further filter search results
+        let filteredResults = searchResults;
+        if (currentCategory !== 'ALL') {
+            filteredResults = searchResults.filter(item => item.category === currentCategory);
+        }
+        
+        displayMenuItems(filteredResults);
+        updateResultsCount(filteredResults.length, currentSearchQuery);
+        
+    } catch (error) {
+        document.getElementById('menu-items').innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> Search failed: ${error.message}
+                </div>
+            </div>
+        `;
+    }
+}
+
+function clearSearch() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.value = '';
+        currentSearchQuery = '';
+        
+        // Restore current category view
+        if (currentCategory === 'ALL') {
+            displayMenuItems(allMenuItems);
+            updateResultsCount(allMenuItems.length);
+        } else {
+            filterByCategory(currentCategory);
+        }
+    }
+}
+
+function updateResultsCount(count, searchQuery = '') {
+    const countElement = document.getElementById('search-results-count');
+    if (countElement) {
+        if (searchQuery) {
+            countElement.textContent = `${count} result${count !== 1 ? 's' : ''} for "${searchQuery}"`;
+        } else if (currentCategory !== 'ALL') {
+            countElement.textContent = `${count} item${count !== 1 ? 's' : ''} in ${capitalizeFirst(currentCategory)}`;
+        } else {
+            countElement.textContent = `${count} item${count !== 1 ? 's' : ''} total`;
+        }
+    }
+}
+
 function displayMenuItems(items) {
     const container = document.getElementById('menu-items');
     
     if (items.length === 0) {
+        const message = currentSearchQuery ? 
+            `No items found for "${currentSearchQuery}"` : 
+            `No menu items available in this category.`;
+            
         container.innerHTML = `
             <div class="col-12">
                 <div class="alert alert-info" role="alert">
-                    <i class="fas fa-info-circle"></i> No menu items available in this category.
+                    <i class="fas fa-info-circle"></i> ${message}
                 </div>
             </div>
         `;
@@ -72,12 +169,20 @@ function filterByCategory(category) {
     });
     event.target.classList.add('active');
     
+    // If there's an active search, perform search with category filter
+    if (currentSearchQuery) {
+        performSearch(currentSearchQuery);
+        return;
+    }
+    
     // Filter and display items
     if (category === 'ALL') {
         displayMenuItems(allMenuItems);
+        updateResultsCount(allMenuItems.length);
     } else {
         const filteredItems = allMenuItems.filter(item => item.category === category);
         displayMenuItems(filteredItems);
+        updateResultsCount(filteredItems.length);
     }
 }
 
